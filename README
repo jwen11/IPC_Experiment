@@ -1,0 +1,18 @@
+1. How to make
+    a)On normal PC, just do 
+        $make
+    b)On P4080, do
+        $make P4080=true
+
+2. What you can modify in include/define.h
+    MEASURE_PRODUCER 0: measure consumer
+                     1: measure producer
+    ITER (NUM) : NUM iterations
+    PERIOD (num): the period of the periodic tasks are num us                     
+
+3.Use ../log/util/collect_data.py to collect data from the log
+  a. cd ../log/
+  b. mkdir ExpName
+  c. mv *log ExpName
+  d. python ./collect_data.py ExpName
+  e. cat ExpName.result
