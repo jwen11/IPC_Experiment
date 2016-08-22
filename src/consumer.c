@@ -63,10 +63,10 @@ int main(int argc, char** argv)
                                             
 //get msg size
     if (argc == 2){
-        msg_size = atoi(argv[1]);
+        msg_size = atoi(argv[1])*1024;
     }
     else{
-        msg_size = 1;
+        msg_size = 1024;
     }
 
     buf = (char*) malloc (msg_size);
@@ -128,6 +128,10 @@ int main(int argc, char** argv)
         time_elapsed = (tend.tv_sec - tstart.tv_sec) * 1000000 +(tend.tv_usec - tstart.tv_usec) ; 
         fprintf(fp,"%lu\n", time_elapsed );
 #endif        
+        if ((*buf) != (char)i || buf[msg_size -1] != (char)i) {
+            printf("Sanity check Failed!%d/%d != %d\n", (int)(*buf),(int) buf[msg_size -1], i);
+            break;
+        }
 #endif        
     }
     

@@ -61,10 +61,10 @@ int main(int argc, char** argv)
                                             
 //get msg size
     if (argc == 2){
-        msg_size = atoi(argv[1]);
+        msg_size = atoi(argv[1]) * 1024;
     }
     else{
-        msg_size = 1;
+        msg_size = 1024;
     }
 
     buf = (char*) malloc (msg_size);
@@ -107,6 +107,8 @@ int main(int argc, char** argv)
     for (i = 0; i <ITER; ++i) {
         clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &next, NULL);
         timespec_add_us(&next, PERIOD);
+        *buf = i;
+        buf[msg_size-1] = i;
 #if MEASURE_PRODUCER
 #ifdef __P4080   
 		start = photonStartTiming();
