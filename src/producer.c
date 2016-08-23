@@ -28,10 +28,10 @@ int main(int argc, char** argv)
 
     int pfd;
 #if MEASURE_PRODUCER    
-    int* g_mem_ptr;
     FILE *fp;
     char logname[100];
     unsigned long int time_elapsed;
+    int* g_mem_ptr;
 #ifdef __P4080    
 	unsigned int *start, *end, *elapsed;
 #else
@@ -103,7 +103,7 @@ int main(int argc, char** argv)
 
     clock_gettime(CLOCK_REALTIME, &next);
     timespec_add_us(&next, PERIOD);
-    printf("%s init down...\n",argv[0]);
+    printf("%s init done...\n",argv[0]);
 //--------------------------
 //periodic phase
 //--------------------------

@@ -107,7 +107,7 @@ int main(int argc, char** argv)
 #else    
     timespec_add_us(&next, 3*PERIOD);
 #endif    
-    printf("%s init down...\n",argv[0]);
+    printf("%s init done...\n",argv[0]);
 //--------------------------
 //periodic phase
 //--------------------------
