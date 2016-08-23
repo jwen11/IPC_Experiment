@@ -25,12 +25,13 @@ int main(int argc, char** argv)
     struct timespec next;
     unsigned long int msg_size;
     char *buf;
-    unsigned long int time_elapsed;
 
     int pfd;
 #if MEASURE_PRODUCER    
+    int* g_mem_ptr;
     FILE *fp;
     char logname[100];
+    unsigned long int time_elapsed;
 #ifdef __P4080    
 	unsigned int *start, *end, *elapsed;
 #else
@@ -79,8 +80,10 @@ int main(int argc, char** argv)
         printf("open fifo");
         return 1;
     }
-
 #if MEASURE_PRODUCER    
+//init global mem for invalidate L3
+    g_mem_ptr = (int*) malloc(L3_SIZE);
+//log 
     logname[0] = '\0';
     strcat(logname,"../log/producer_");
     if (argc ==2) 
@@ -110,6 +113,7 @@ int main(int argc, char** argv)
         *buf = (char)i;
         buf[msg_size-1] =(char) i;
 #if MEASURE_PRODUCER
+        invalidate_L3(g_mem_ptr);
 #ifdef __P4080   
 		start = photonStartTiming();
 #else
@@ -135,9 +139,9 @@ int main(int argc, char** argv)
 #if MEASURE_PRODUCER
     fclose (fp);
     printf("Successfully sampled %d write operations\n",ITER);
+    free (g_mem_ptr);
 #endif        
     free (buf);
-
 
     return 0;
 }

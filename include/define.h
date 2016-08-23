@@ -1,7 +1,7 @@
 #ifndef _DEFINE_H_
 #define _DEFINE_H_
 
-#define MEASURE_PRODUCER 1
+#define MEASURE_PRODUCER 0
 #define ITER	(1000)
 #define PERIOD 10000
 
@@ -17,5 +17,6 @@ unsigned int * photonEndTiming();
 unsigned int * photonReportTiming(unsigned int* startCycles,unsigned int* endCycles);
 void photonPrintTiming(FILE* fp, unsigned int * elapsed);
 #endif
-
+#define L3_SIZE (2048*1024)
+#define CACHE_LINE_SIZE (64)
 #endif

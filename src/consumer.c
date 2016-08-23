@@ -30,6 +30,7 @@ int main(int argc, char** argv)
     int pfd;
 #if MEASURE_PRODUCER    
 #else
+    int* g_mem_ptr;
     FILE *fp;
     char logname[100];
     unsigned long int time_elapsed;
@@ -80,6 +81,9 @@ int main(int argc, char** argv)
     
 #if MEASURE_PRODUCER    
 #else
+//init global mem for invalidate L3
+    g_mem_ptr = (int*) malloc(L3_SIZE);
+//log 
     logname[0] = '\0';
     strcat(logname,"../log/consumer_");
     if (argc == 2)
@@ -113,6 +117,7 @@ int main(int argc, char** argv)
 #if MEASURE_PRODUCER    
         read(pfd, buf, msg_size); 
 #else
+        invalidate_L3(g_mem_ptr);
 #ifdef __P4080   
 		start = photonStartTiming();
 #else
@@ -141,6 +146,7 @@ int main(int argc, char** argv)
 #else
     fclose (fp);
     printf("Successfully sampled %d read operations\n",ITER);
+    free (g_mem_ptr);
 #endif        
     free (buf);
     unlink(MYPATH);

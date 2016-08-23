@@ -21,3 +21,13 @@ struct timespec timespec_diff(struct timespec start, struct timespec end)
 	}
 	return temp;
 }
+
+void invalidate_L3(int* p)
+{
+    int i;
+    long int sum; 
+    sum =0;
+    for (i = 0; i < L3_SIZE; i += CACHE_LINE_SIZE/4){
+        sum += p[i]; 
+    }
+}
