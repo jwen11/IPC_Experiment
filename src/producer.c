@@ -22,11 +22,6 @@ int main(int argc, char** argv)
     struct sched_param param;
     cpu_set_t set;
     pid_t myPid;
-#ifdef __P4080    
-	unsigned int *start, *end, *elapsed;
-#else
-    struct timeval tstart, tend;    
-#endif
     struct timespec next;
     unsigned long int msg_size;
     char *buf;
@@ -36,6 +31,11 @@ int main(int argc, char** argv)
 #if MEASURE_PRODUCER    
     FILE *fp;
     char logname[100];
+#ifdef __P4080    
+	unsigned int *start, *end, *elapsed;
+#else
+    struct timeval tstart, tend;    
+#endif
 #endif
 //--------------------------
 // initilization phase    
@@ -107,8 +107,8 @@ int main(int argc, char** argv)
     for (i = 0; i <ITER; ++i) {
         clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &next, NULL);
         timespec_add_us(&next, PERIOD);
-        *buf = i;
-        buf[msg_size-1] = i;
+        *buf = (char)i;
+        buf[msg_size-1] =(char) i;
 #if MEASURE_PRODUCER
 #ifdef __P4080   
 		start = photonStartTiming();

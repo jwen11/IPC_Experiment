@@ -1,7 +1,7 @@
 IDIR =./include
 CC=gcc
 CXX=g++
-COMMONFLAGS = -lrt -O0
+COMMONFLAGS = -lrt -O0 -Wall
 
 ODIR=./obj
 LDIR=./lib

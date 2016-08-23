@@ -23,21 +23,21 @@ int main(int argc, char** argv)
     cpu_set_t set;
     pid_t myPid;
     
-#ifdef __P4080    
-	unsigned int *start, *end, *elapsed;
-#else
-    struct timeval tstart, tend;    
-#endif
     struct timespec next;
     unsigned long int msg_size;
     char *buf;
-    unsigned long int time_elapsed;
 
     int pfd;
 #if MEASURE_PRODUCER    
 #else
     FILE *fp;
     char logname[100];
+    unsigned long int time_elapsed;
+#ifdef __P4080    
+	unsigned int *start, *end, *elapsed;
+#else
+    struct timeval tstart, tend;    
+#endif
 #endif    
 //--------------------------
 // initilization phase    
