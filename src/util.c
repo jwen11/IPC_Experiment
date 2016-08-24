@@ -22,6 +22,14 @@ struct timespec timespec_diff(struct timespec start, struct timespec end)
 	return temp;
 }
 
+bool timespec_AbeforeB(struct timespec a, struct timespec b)
+{
+    if (a.tv_sec == b.tv_sec)
+        return a.tv_nsec < b.tv_nsec;
+    else 
+        return a.tv_sec < b.tv_sec;
+}
+
 void invalidate_L3(int* p)
 {
     int i;
@@ -32,3 +40,4 @@ void invalidate_L3(int* p)
     }
     return;
 }
+

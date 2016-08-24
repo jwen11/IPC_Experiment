@@ -14,6 +14,7 @@
 #include "../include/util.h"
 
 
+extern int errno;
 int main(int argc, char** argv)
 {
     
@@ -23,15 +24,15 @@ int main(int argc, char** argv)
     cpu_set_t set;
     pid_t myPid;
     
-    struct timespec next;
+    struct timespec next, now;
     unsigned long int msg_size;
     char *buf;
 
     int pfd;
 #if MEASURE_PRODUCER    
 #else
-    int* g_mem_ptr;
     FILE *fp;
+    int* g_mem_ptr;
     char logname[100];
     unsigned long int time_elapsed;
 #ifdef __P4080    
@@ -112,8 +113,26 @@ int main(int argc, char** argv)
 //periodic phase
 //--------------------------
     for (i = 0; i <ITER; ++i) {
-        clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &next, NULL);
+
+        if ( clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &next, NULL))
+        {
+            printf("# %s clock_nanosleep errno = %d, @%dth iter\n", argv[1], errno,i );
+#if MEASURE_PRODUCER
+#else
+            fprintf(fp,"# %s clock_nanosleep errno = %d, @%dth iter\n", argv[1], errno,i );
+#endif            
+        }
         timespec_add_us(&next, PERIOD);
+        clock_gettime(CLOCK_REALTIME, &now);
+        if (timespec_AbeforeB(next, now))
+        {
+            printf("# %s Deadline missed @%dth iter, consider rerun with looser period!\n",argv[1], i );
+#if MEASURE_PRODUCER
+#else
+            fprintf(fp, "# %s Deadline missed @%dth iter, consider rerun with looser period!\n",argv[1], i );
+#endif            
+        }
+        
 #if MEASURE_PRODUCER    
         read(pfd, buf, msg_size); 
 #else
