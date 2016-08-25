@@ -86,7 +86,7 @@ int main(int argc, char** argv)
     g_mem_ptr = (int*) malloc(L3_SIZE);
 //log 
     logname[0] = '\0';
-    strcat(logname,"../log/producer_");
+    strcat(logname,"./log/producer_");
     if (argc ==2) 
         strcat(logname,argv[1]);
     strcat(logname,".log");

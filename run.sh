@@ -34,7 +34,3 @@ sleep 1
 sudo ./consumer 4096
 sleep 1
 
-sudo ./producer 16384 &
-sleep 1
-sudo ./consumer 16384
-sleep 1

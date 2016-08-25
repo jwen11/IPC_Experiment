@@ -32,12 +32,17 @@ bool timespec_AbeforeB(struct timespec a, struct timespec b)
 
 void invalidate_L3(int* p)
 {
-    int i;
+    int i,j;
     long int sum; 
     sum =0;
-    for (i = 0; i < L3_SIZE/4; i += (CACHE_LINE_SIZE/4)){
-        sum += p[i]; 
+    for (j=0; j<3; ++j){
+        for (i = 0; i < L3_SIZE/4; i += (CACHE_LINE_SIZE/4)){
+            sum += p[i]; 
+        }
     }
+#ifdef P4080    
+    asm("msync");
+#endif    
     return;
 }
 

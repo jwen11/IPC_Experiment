@@ -3,7 +3,7 @@
 
 #define MEASURE_PRODUCER 1
 #define ITER	(1000)
-#define PERIOD 10000
+#define PERIOD 40000
 
 #define MYPATH	"/tmp/myFIFO"
 #define PRIO 1
