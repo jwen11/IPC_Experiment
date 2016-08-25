@@ -34,11 +34,11 @@ int main(int argc, char** argv)
     FILE *fp;
     int* g_mem_ptr;
     char logname[100];
-    unsigned long int time_elapsed;
 #ifdef __P4080    
 	unsigned int *start, *end, *elapsed;
 #else
     struct timeval tstart, tend;    
+    unsigned long int time_elapsed;
 #endif
 #endif    
 //--------------------------

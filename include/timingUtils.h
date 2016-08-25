@@ -74,11 +74,11 @@
         : "$8", "$9" \
     );\
 }
-
-//#define metro_magic_timing_report(cycleLo, cycleHi) {\
-//    asm volatile( "nop\n\t");\
-//}
-
+/*
+#define metro_magic_timing_report(cycleLo, cycleHi) {\
+    asm volatile( "nop\n\t");\
+}
+*/
 #endif
 
 #ifdef BTL
@@ -97,22 +97,22 @@
     raw_magic_timing_report_print(); \
 }
 
-    
-//
-//void metro_magic_timing_begin(int cycleLo, int cycleHi)
-//{
-//    raw_magic_timing_report_begin();
-//}
-//
-//void metro_magic_timing_end(int cycleLo, int cycleHi)
-//{
-//    raw_magic_timing_report_end();
-//}
-//
-//void metro_magic_timing_report(int cycleLo, int cycleHi)
-//{
-//    raw_magic_timing_report_print();
-//    return;
-//}
+/*  
 
+void metro_magic_timing_begin(int cycleLo, int cycleHi)
+{
+    raw_magic_timing_report_begin();
+}
+
+void metro_magic_timing_end(int cycleLo, int cycleHi)
+{
+    raw_magic_timing_report_end();
+}
+
+void metro_magic_timing_report(int cycleLo, int cycleHi)
+{
+    raw_magic_timing_report_print();
+    return;
+}
+*/
 #endif

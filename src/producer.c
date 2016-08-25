@@ -31,12 +31,12 @@ int main(int argc, char** argv)
 #if MEASURE_PRODUCER    
     FILE *fp;
     char logname[100];
-    unsigned long int time_elapsed;
     int* g_mem_ptr;
 #ifdef __P4080    
 	unsigned int *start, *end, *elapsed;
 #else
     struct timeval tstart, tend;    
+    unsigned long int time_elapsed;
 #endif
 #endif
 //--------------------------
