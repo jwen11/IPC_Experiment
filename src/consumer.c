@@ -74,8 +74,14 @@ int main(int argc, char** argv)
 
     buf = (char*) malloc (msg_size);
 
-
+#if BLOCKING
     pfd = open(MYPATH, O_RDONLY);
+    printf("Starting the consumer with blocking read \n");
+#else
+    pfd = open(MYPATH, O_RDONLY | O_NONBLOCK);
+    printf("Starting the consumer with non-blocking read \n");
+#endif
+
     if (pfd == -1){
         printf("open fifo");
         return 1;
@@ -164,7 +170,9 @@ int main(int argc, char** argv)
             printf("Sanity check Failed!%d/%d != %d\n", (int)(*buf),(int) buf[msg_size -1], i);
             break;
         }
-#endif        
+#endif       
+        fflush(stdout); 
+        fflush(fp);
     }
     
         

@@ -1,9 +1,11 @@
 #ifndef _DEFINE_H_
 #define _DEFINE_H_
 
-#define MEASURE_PRODUCER 1
+#define MEASURE_PRODUCER 0
 #define ITER	(1000)
 #define PERIOD 40000
+#define BLOCKING 0
+
 
 #define MYPATH	"/tmp/myFIFO"
 #define PRIO 1

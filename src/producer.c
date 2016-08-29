@@ -152,14 +152,19 @@ int main(int argc, char** argv)
 #if MEASURE_PRODUCER
 #ifdef __P4080   
 		end = photonEndTiming();
+        // release the semaphore //
 		elapsed = photonReportTiming(start, end);
 		photonPrintTiming(fp, elapsed);
 #else
         gettimeofday(&tend, NULL);
+        // release the semaphore //
         time_elapsed = (tend.tv_sec - tstart.tv_sec) * 1000000 +(tend.tv_usec - tstart.tv_usec) ; 
         fprintf(fp,"%lu\n", time_elapsed );
+        fflush(fp);
 #endif		
-#endif        
+#endif
+        fflush(stdout); // Write changes to the file now 
+
     }
     
         
