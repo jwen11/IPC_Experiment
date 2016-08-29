@@ -27,6 +27,7 @@ int main(int argc, char** argv)
     struct timespec next, now;
     unsigned long int msg_size;
     char *buf;
+    char type;
 
     int pfd;
 #if MEASURE_PRODUCER    
@@ -78,6 +79,13 @@ int main(int argc, char** argv)
     if (pfd == -1){
         printf("open fifo");
         return 1;
+    }
+//get invalid type, 'r','w', 'n'
+    if (argc == 3){
+        type = *(argv[2]);
+    }
+    else{
+        type = 'n';
     }
     
 #if MEASURE_PRODUCER    
@@ -136,7 +144,7 @@ int main(int argc, char** argv)
 #if MEASURE_PRODUCER    
         read(pfd, buf, msg_size); 
 #else
-        invalidate_L3(g_mem_ptr);
+        invalidate_L3(g_mem_ptr, type);
 #ifdef __P4080   
 		start = photonStartTiming();
 #else

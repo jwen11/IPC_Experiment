@@ -30,14 +30,24 @@ bool timespec_AbeforeB(struct timespec a, struct timespec b)
         return a.tv_sec < b.tv_sec;
 }
 
-void invalidate_L3(int* p)
+void invalidate_L3(int* p, char type)
 {
     int i,j;
     long int sum; 
     sum =0;
-    for (j=0; j<3; ++j){
-        for (i = 0; i < L3_SIZE/4; i += (CACHE_LINE_SIZE/4)){
-            sum += p[i]; 
+    if (type == 'w'){
+        for (j=0; j<3; ++j){
+            for (i = 0; i < L3_SIZE/4; i += (CACHE_LINE_SIZE/4)){
+                 p[i] = j; 
+            }
+        }
+    }
+    else if (type == 'r'){
+
+        for (j=0; j<3; ++j){
+            for (i = 0; i < L3_SIZE/4; i += (CACHE_LINE_SIZE/4)){
+                sum += p[i]; 
+            }
         }
     }
 #ifdef P4080    

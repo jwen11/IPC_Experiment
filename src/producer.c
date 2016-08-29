@@ -26,6 +26,7 @@ int main(int argc, char** argv)
     struct timespec next, now;
     unsigned long int msg_size;
     char *buf;
+    char type;
 
     int pfd;
 #if MEASURE_PRODUCER    
@@ -68,6 +69,14 @@ int main(int argc, char** argv)
     else{
         msg_size = 1024;
     }
+//get invalid type, 'r','w', 'n'
+    if (argc == 3){
+        type = *(argv[2]);
+    }
+    else{
+        type = 'n';
+    }
+     
 
     buf = (char*) malloc (msg_size);
 
@@ -131,7 +140,7 @@ int main(int argc, char** argv)
         *buf = (char)i;
         buf[msg_size-1] =(char) i;
 #if MEASURE_PRODUCER
-        invalidate_L3(g_mem_ptr);
+        invalidate_L3(g_mem_ptr, type);
 #ifdef __P4080   
 		start = photonStartTiming();
 #else
