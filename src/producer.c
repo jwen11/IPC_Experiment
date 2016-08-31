@@ -4,16 +4,79 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <signal.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/fcntl.h>
 #include <time.h>
 #include <sys/time.h>
+#include <pthread.h>
 #include <unistd.h>
 #include "../include/define.h"
 #include "../include/util.h"
 
 extern int errno;
+
+
+pthread_mutex_t cStatus_mutex;
+int             consumerStatus = 0;
+int             cpid = 0;    
+
+
+void sig_handler(int signo)
+{
+  if (signo == SIGUSR1)
+    consumerStatus++;
+
+}
+
+void initSync(){
+
+    FILE *ptr;
+    char buffer[10];
+
+    system("rm -rf /tmp/producer");
+
+    system("pidof -s producer > /tmp/producer"); // Get the PID of the producer and write it to the file
+
+    if (signal(SIGUSR1, sig_handler) == SIG_ERR){
+        printf("\ncan't catch SIGINT\n");
+        exit(0);
+    }
+
+    printf("\n Waiting for the consumer to start \n");
+    while(consumerStatus == 0); // Wait for the consumer to start
+    
+    pthread_mutex_lock(&cStatus_mutex);
+    consumerStatus = 0;
+    pthread_mutex_unlock(&cStatus_mutex);
+
+    printf("Consumer started with pid \n"); // Consumer has started 
+
+    ptr = fopen("/tmp/consumer","rb");  // Get the pid of the consumer
+
+    if(ptr == NULL){
+        printf("Unable to open file \n");
+        exit(0);
+    }
+
+    fread(buffer,sizeof(buffer),1,ptr); // read 10 bytes to our buffer
+
+    cpid =  atoi(buffer); // Consumer PID
+
+    printf("Pid of /tmp/consumer = %d \n", cpid);
+
+
+}
+
+void intConsumer(void) // send an interrupt to consumer
+{
+    kill(cpid, SIGUSR1);
+}
+
+void isConsumerDone(){
+    while(consumerStatus == 0);
+}
 
 int main(int argc, char** argv)
 {
@@ -115,6 +178,12 @@ int main(int argc, char** argv)
     clock_gettime(CLOCK_REALTIME, &next);
     timespec_add_us(&next, PERIOD);
     printf("%s init done...\n",argv[0]);
+
+
+    initSync(); 
+
+
+
 //--------------------------
 //periodic phase
 //--------------------------
@@ -159,11 +228,25 @@ int main(int argc, char** argv)
         gettimeofday(&tend, NULL);
         // release the semaphore //
         time_elapsed = (tend.tv_sec - tstart.tv_sec) * 1000000 +(tend.tv_usec - tstart.tv_usec) ; 
+        
         fprintf(fp,"%lu\n", time_elapsed );
         fflush(fp);
+
+
+        
 #endif		
 #endif
         fflush(stdout); // Write changes to the file now 
+        
+        intConsumer(); // Tell consumer that the data is ready by sending an interrupt signal
+
+        isConsumerDone(); //Wait Until you hear back from the Consumer
+
+        pthread_mutex_lock(&cStatus_mutex);
+        consumerStatus = 0; 
+        pthread_mutex_unlock(&cStatus_mutex);
+
+
 
     }
     

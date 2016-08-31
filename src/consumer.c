@@ -4,17 +4,78 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <signal.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/fcntl.h>
 #include <time.h>
+#include <pthread.h>
 #include <sys/time.h>
 #include <unistd.h>
 #include "../include/define.h"
 #include "../include/util.h"
 
 
+
+pthread_mutex_t pStatus_mutex;
+int             producerStatus = 0;
+int             ppid = 0;    
 extern int errno;
+
+void sig_handler(int signo)
+{
+  if (signo == SIGUSR1)
+    producerStatus++;
+
+}
+
+void initSync(){
+
+    FILE *ptr;
+    char buffer[10];
+
+
+
+    
+    system("rm -rf /tmp/consumer");
+
+    system("pidof -s consumer > /tmp/consumer");    
+
+    if (signal(SIGUSR1, sig_handler) == SIG_ERR){
+        printf("\ncan't catch SIGINT\n");
+        exit(0);
+    }
+
+    ptr = fopen("/tmp/producer","rb");  // r for read, b for binary 
+
+
+    if(ptr == NULL){
+        printf("Unable to open file \n");
+        exit(0);
+    }
+
+    
+
+    fread(buffer,sizeof(buffer),1,ptr); // read 10 bytes to our buffer
+
+
+    
+    ppid =  atoi(buffer); // Producer PID
+
+    printf("Pid of /tmp/producer = %d \n", ppid);
+
+
+}
+
+void intProducer(void) // send an interrupt to consumer
+{
+    kill(ppid, SIGUSR1);
+}
+
+void waitForProducerToWrite(){
+    while(producerStatus == 0);
+}
+
 int main(int argc, char** argv)
 {
     
@@ -123,10 +184,20 @@ int main(int argc, char** argv)
     timespec_add_us(&next, 3*PERIOD);
 #endif    
     printf("%s init done...\n",argv[0]);
+
+    initSync();
+    intProducer();
 //--------------------------
 //periodic phase
 //--------------------------
+
     for (i = 0; i <ITER; ++i) {
+
+        waitForProducerToWrite();
+
+        pthread_mutex_lock(&pStatus_mutex);
+        producerStatus = 0; 
+        pthread_mutex_unlock(&pStatus_mutex);
 
         if ( clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &next, NULL))
         {
@@ -171,6 +242,7 @@ int main(int argc, char** argv)
             break;
         }
 #endif       
+        intProducer();// Send an interrupt to the producer
         fflush(stdout); 
         fflush(fp);
     }
