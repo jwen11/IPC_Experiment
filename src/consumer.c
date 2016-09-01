@@ -46,6 +46,8 @@ void initSync(){
         exit(0);
     }
 
+    sleep(1);
+
     ptr = fopen("/tmp/producer","rb");  // r for read, b for binary 
 
 
