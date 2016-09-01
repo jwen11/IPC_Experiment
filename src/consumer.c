@@ -182,6 +182,8 @@ int main(int argc, char** argv)
 #endif
     fprintf(fp,"%d\n",ITER);
 #endif    
+    initSync();
+    intProducer();
 
     clock_gettime(CLOCK_REALTIME, &next);
     timespec_add_us(&next, PERIOD);
@@ -191,8 +193,6 @@ int main(int argc, char** argv)
 #endif    
     printf("%s init done...\n",argv[0]);
 
-    initSync();
-    intProducer();
 //--------------------------
 //periodic phase
 //--------------------------

@@ -181,12 +181,12 @@ int main(int argc, char** argv)
 #else
 #endif
 
+    initSync(); 
     clock_gettime(CLOCK_REALTIME, &next);
     timespec_add_us(&next, PERIOD);
     printf("%s init done...\n",argv[0]);
 
 
-    initSync(); 
 
 
 

@@ -75,7 +75,7 @@ mkdir log/log_niin_r
 mv log/*log log/log_niin_r
 
 sudo ~jwen11/isolbench/run_inter_w.sh
-for i in `seq 7 8`;
+for i in `seq 1 8`;
 do
     sudo ./producer ${i} n &
     sleep 1

@@ -6,7 +6,7 @@ make
 
 
 
-for i in `seq 3 8`;
+for i in `seq 1 8`;
 do
     sudo ./producer ${i} r &
     sleep 1
