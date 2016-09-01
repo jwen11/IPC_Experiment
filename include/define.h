@@ -4,7 +4,7 @@
 #define MEASURE_PRODUCER 0
 #define ITER	(1000)
 #define PERIOD 40000
-#define BLOCKING 0
+#define BLOCKING 1
 
 
 #define MYPATH	"/tmp/myFIFO"

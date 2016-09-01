@@ -35,6 +35,7 @@ void initSync(){
     FILE *ptr;
     char buffer[10];
 
+	printf("\n Producer Started ... \n");
     system("rm -rf /tmp/producer");
 
     system("pidof -s producer > /tmp/producer"); // Get the PID of the producer and write it to the file
@@ -126,7 +127,7 @@ int main(int argc, char** argv)
     }
                                             
 //get msg size
-    if (argc == 2){
+    if (argc >= 2){
         msg_size = atoi(argv[1]) * 1024;
     }
     else{
@@ -159,7 +160,7 @@ int main(int argc, char** argv)
 //log 
     logname[0] = '\0';
     strcat(logname,"./log/producer_");
-    if (argc ==2) 
+    if (argc >=2) 
         strcat(logname,argv[1]);
     strcat(logname,".log");
     fp  = fopen (logname, "w");
@@ -191,9 +192,9 @@ int main(int argc, char** argv)
     
         if ( clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &next, NULL))
         {
-            printf("# %s clock_nanosleep errno = %d, @%dth iter\n", argv[1], errno,i );
+            printf("# %s clock_nanosleep errno = %d, @%dth iter\n", argv[0], errno,i );
 #if MEASURE_PRODUCER
-            fprintf(fp,"# %s clock_nanosleep errno = %d, @%dth iter\n", argv[1], errno,i );
+            fprintf(fp,"# %s clock_nanosleep errno = %d, @%dth iter\n", argv[0], errno,i );
 #endif            
         }
         timespec_add_us(&next, PERIOD);

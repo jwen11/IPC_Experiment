@@ -126,7 +126,7 @@ int main(int argc, char** argv)
     }
                                             
 //get msg size
-    if (argc == 2){
+    if (argc >= 2){
         msg_size = atoi(argv[1])*1024;
     }
     else{
@@ -144,7 +144,7 @@ int main(int argc, char** argv)
 #endif
 
     if (pfd == -1){
-        printf("open fifo");
+        printf("%s open fifo", argv[0]);
         return 1;
     }
 //get invalid type, 'r','w', 'n'
@@ -162,7 +162,7 @@ int main(int argc, char** argv)
 //log 
     logname[0] = '\0';
     strcat(logname,"./log/consumer_");
-    if (argc == 2)
+    if (argc >= 2)
         strcat(logname,argv[1]);
     strcat(logname,".log");
     fp  = fopen (logname, "w");
@@ -181,7 +181,7 @@ int main(int argc, char** argv)
     timespec_add_us(&next, PERIOD);
 #if MEASURE_PRODUCER    
 #else    
-    timespec_add_us(&next, 3*PERIOD);
+//    timespec_add_us(&next, 3*PERIOD);
 #endif    
     printf("%s init done...\n",argv[0]);
 
@@ -201,10 +201,10 @@ int main(int argc, char** argv)
 
         if ( clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &next, NULL))
         {
-            printf("# %s clock_nanosleep errno = %d, @%dth iter\n", argv[1], errno,i );
+            printf("# %s clock_nanosleep errno = %d, @%dth iter\n", argv[0], errno,i );
 #if MEASURE_PRODUCER
 #else
-            fprintf(fp,"# %s clock_nanosleep errno = %d, @%dth iter\n", argv[1], errno,i );
+            fprintf(fp,"# %s clock_nanosleep errno = %d, @%dth iter\n", argv[0], errno,i );
 #endif            
         }
         timespec_add_us(&next, PERIOD);
