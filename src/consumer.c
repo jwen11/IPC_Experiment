@@ -106,6 +106,7 @@ int main(int argc, char** argv)
 //--------------------------
 // initilization phase    
 //--------------------------
+        printf("argc = %d\n", argc);
 //set priority
 #if PRIO
     param.sched_priority = 99; /* 1(low) - 99(high) for SCHED_FIFO or SCHED_RR
@@ -134,7 +135,10 @@ int main(int argc, char** argv)
     }
 
     buf = (char*) malloc (msg_size);
-
+    if (buf == NULL){
+        printf ("\nmalloc error\n");
+        return 1;
+    }
 #if BLOCKING
     pfd = open(MYPATH, O_RDONLY);
     printf("Starting the consumer with blocking read \n");
