@@ -250,7 +250,10 @@ int main(int argc, char** argv)
 #endif       
         intProducer();// Send an interrupt to the producer
         fflush(stdout); 
+#if MEASURE_PRODUCER    
+#else
         fflush(fp);
+#endif        
     }
     
         
