@@ -10,9 +10,13 @@
     ITER (NUM) : NUM iterations
     PERIOD (num): the period of the periodic tasks are num us                     
 
-3.Use ../log/util/collect_data.py to collect data from the log
-  a. cd ../log/
-  b. mkdir ExpName
-  c. mv *log ExpName
-  d. python ./collect_data.py ExpName
-  e. cat ExpName.result
+3.How to run the experiments on P4080
+login with jwen11
+sudo ./init_locker.sh
+modify the testset of "run_testset.sh"
+cd SCE/IPC_Experiment/run_testset.sh
+
+
+4.Use ./log/util/collect.sh to collect data from the log
+  a. cd ./log/util
+  b. ./collect.sh

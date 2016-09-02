@@ -2,8 +2,8 @@
 ##make clean
 ##make P4080=true
 
-#testset="`seq 1 8` 16 32 64"
-testset="64 16 32"
+testset="`seq 1 8` 16 32 64"
+#testset="64 16 32"
 
 if [ -e "log/"*"log" ]; then
     echo "Please make sure the log directory contains no irrelevant logs"
