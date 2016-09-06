@@ -13,6 +13,16 @@
 #include "../include/define.h"
 #include "../include/util.h"
 
+#include <fcntl.h>
+
+#define MAX_PATH 256
+#define _STR(x) #x
+#define STR(x) _STR(x)
+
+static const char *find_debugfs(void);
+
+int trace_fd = -1;
+int marker_fd = -1;
 
 extern int errno;
 int main(int argc, char** argv)
@@ -28,6 +38,11 @@ int main(int argc, char** argv)
     unsigned long int msg_size;
     char *buf;
     char type;
+
+// variables for finding /tracing folder
+    char *debugfs;
+    char path[256];
+
 
     int pfd;
 #if MEASURE_PRODUCER    
@@ -117,10 +132,29 @@ int main(int argc, char** argv)
     timespec_add_us(&next, 3*PERIOD);
 #endif    
     printf("%s init done...\n",argv[0]);
+
+// open tracing file descriptors
+    debugfs = find_debugfs();
+
+	if (debugfs) {
+	    strcpy(path, debugfs);  /* BEWARE buffer overflow */
+	    strcat(path,"/tracing/tracing_on");
+	    trace_fd = open(path, O_WRONLY);
+	    // trace_fd = open("/sys/kernel/debug/tracing/tracing_on", O_WRONLY);
+	    printf("trace_fd is: %d\n", trace_fd);
+	    
+	    strcpy(path, debugfs);
+	    strcat(path,"/tracing/trace_marker");
+	    marker_fd = open(path, O_WRONLY);
+	    printf("marker_fd: %i\n", marker_fd);
+
+	}
+
+
 //--------------------------
 //periodic phase
 //--------------------------
-    for (i = 0; i <ITER; ++i) {
+    for (i = 0; i < 1; ++i) {
 
         if ( clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &next, NULL))
         {
@@ -141,8 +175,25 @@ int main(int argc, char** argv)
 #endif            
         }
         
-#if MEASURE_PRODUCER    
-        read(pfd, buf, msg_size); 
+        if (trace_fd >= 0)
+	    {
+	    	printf("trace_fd works\n");
+		    write(trace_fd, "1", 1);
+	    }
+
+
+#if MEASURE_PRODUCER
+		
+		if (marker_fd >= 0)
+	    {
+	    	printf("trace_marker works\n");
+	    	write(marker_fd, "about to print\n", 15);
+	    }
+
+        read(pfd, buf, msg_size);
+
+        if (marker_fd >= 0)
+        	write(marker_fd, "finished print\n", 13); 
 #else
         invalidate_L3(g_mem_ptr, type);
 #ifdef __P4080   
@@ -150,7 +201,22 @@ int main(int argc, char** argv)
 #else
         gettimeofday (&tstart, NULL);
 #endif        
-        read(pfd, buf, msg_size); 
+        
+        printf("marker_fd:%i\n", marker_fd);
+	    if (marker_fd >= 0)
+	    {
+	    	printf("trace_marker works\n");
+	    	write(marker_fd, "about to print\n", 15);
+	    }
+        
+        read(pfd, buf, msg_size);
+
+        if (marker_fd >= 0)
+        	write(marker_fd, "finished print\n", 13);
+
+
+
+
 #ifdef __P4080   
 		end = photonEndTiming();
 		elapsed = photonReportTiming(start, end);
@@ -165,6 +231,11 @@ int main(int argc, char** argv)
             break;
         }
 #endif        
+        if (trace_fd >= 0) 
+        {
+		    write(trace_fd, "0", 1);
+		    printf("trace_fd finish\n");
+        }
     }
     
         
@@ -179,3 +250,37 @@ int main(int argc, char** argv)
     unlink(MYPATH);
     return 0;
 }
+
+
+static const char *find_debugfs(void)
+{
+    static char debugfs[MAX_PATH+1];
+    static int debugfs_found;
+    char type[100];
+    FILE *fp;
+
+    if (debugfs_found)
+	    return debugfs;
+
+    if ((fp = fopen("/proc/mounts","r")) == NULL)
+	    return NULL;
+
+    while (fscanf(fp, "%*s %"
+		  STR(MAX_PATH)
+		  "s %99s %*s %*d %*d\n",
+		  debugfs, type) == 2) {
+	    if (strcmp(type, "debugfs") == 0)
+		    break;
+    }
+    fclose(fp);
+
+    if (strcmp(type, "debugfs") != 0)
+	    return NULL;
+
+    debugfs_found = 1;
+
+    return debugfs;
+}
+
+
+/*Read more: http://blog.fpmurphy.com/2014/05/kernel-tracing-using-ftrace.html#ixzz4IpfjUZbV*/
