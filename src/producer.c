@@ -99,16 +99,17 @@ int main(int argc, char** argv)
     if (argc ==2) 
         strcat(logname,argv[1]);
     strcat(logname,".log");
-    fp  = fopen (logname, "w");
+    // fp  = fopen (logname, "w");
+    fp  = fopen (logname, "a");
     if (fp == NULL){
         printf("open log");
         return 1;
     }
-    fprintf(fp,"#%s\n",logname);
+    // fprintf(fp,"#%s\n",logname);
 #ifdef __P4080   
-    fprintf(fp,"#EPU\n");
+    // fprintf(fp,"#EPU\n");
 #endif
-    fprintf(fp,"%d\n",ITER);
+    // fprintf(fp,"%d\n",ITER);
 #else
 #endif
 
@@ -118,7 +119,7 @@ int main(int argc, char** argv)
 //--------------------------
 //periodic phase
 //--------------------------
-    for (i = 0; i <ITER; ++i) {
+    for (i = 0; i < ITER; ++i) {
     
         if ( clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &next, NULL))
         {

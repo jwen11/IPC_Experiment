@@ -2,7 +2,7 @@
 #define _DEFINE_H_
 
 #define MEASURE_PRODUCER 1
-#define ITER	(1000)
+#define ITER	(1)
 #define PERIOD 40000
 
 #define MYPATH	"/tmp/myFIFO"

@@ -141,12 +141,12 @@ int main(int argc, char** argv)
 	    strcat(path,"/tracing/tracing_on");
 	    trace_fd = open(path, O_WRONLY);
 	    // trace_fd = open("/sys/kernel/debug/tracing/tracing_on", O_WRONLY);
-	    printf("trace_fd is: %d\n", trace_fd);
+	    // printf("trace_fd is: %d\n", trace_fd);
 	    
 	    strcpy(path, debugfs);
 	    strcat(path,"/tracing/trace_marker");
 	    marker_fd = open(path, O_WRONLY);
-	    printf("marker_fd: %i\n", marker_fd);
+	    // printf("marker_fd: %i\n", marker_fd);
 
 	}
 
@@ -154,7 +154,7 @@ int main(int argc, char** argv)
 //--------------------------
 //periodic phase
 //--------------------------
-    for (i = 0; i < 1; ++i) {
+    for (i = 0; i < ITER; ++i) {
 
         if ( clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &next, NULL))
         {
@@ -177,7 +177,7 @@ int main(int argc, char** argv)
         
         if (trace_fd >= 0)
 	    {
-	    	printf("trace_fd works\n");
+	    	printf("trace start\n");
 		    write(trace_fd, "1", 1);
 	    }
 
@@ -205,7 +205,7 @@ int main(int argc, char** argv)
         printf("marker_fd:%i\n", marker_fd);
 	    if (marker_fd >= 0)
 	    {
-	    	printf("trace_marker works\n");
+	    	// printf("trace_marker works\n");
 	    	write(marker_fd, "about to print\n", 15);
 	    }
         
@@ -234,7 +234,7 @@ int main(int argc, char** argv)
         if (trace_fd >= 0) 
         {
 		    write(trace_fd, "0", 1);
-		    printf("trace_fd finish\n");
+		    printf("trace finish\n");
         }
     }
     
