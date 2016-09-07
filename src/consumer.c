@@ -174,28 +174,19 @@ int main(int argc, char** argv)
             fprintf(fp, "# %s Deadline missed @%dth iter, consider rerun with looser period!\n",argv[1], i );
 #endif            
         }
-        
+
+#if MEASURE_PRODUCER
+
+        read(pfd, buf, msg_size);
+
+#else
+        invalidate_L3(g_mem_ptr, type);
+
         if (trace_fd >= 0)
 	    {
 	    	printf("trace start\n");
 		    write(trace_fd, "1", 1);
 	    }
-
-
-#if MEASURE_PRODUCER
-		
-		if (marker_fd >= 0)
-	    {
-	    	printf("trace_marker works\n");
-	    	write(marker_fd, "about to print\n", 15);
-	    }
-
-        read(pfd, buf, msg_size);
-
-        if (marker_fd >= 0)
-        	write(marker_fd, "finished print\n", 13); 
-#else
-        invalidate_L3(g_mem_ptr, type);
 #ifdef __P4080   
 		start = photonStartTiming();
 #else
@@ -206,15 +197,13 @@ int main(int argc, char** argv)
 	    if (marker_fd >= 0)
 	    {
 	    	// printf("trace_marker works\n");
-	    	write(marker_fd, "about to print\n", 15);
+	    	write(marker_fd, "about to read\n", 14);
 	    }
         
         read(pfd, buf, msg_size);
 
         if (marker_fd >= 0)
-        	write(marker_fd, "finished print\n", 13);
-
-
+        	write(marker_fd, "finished read\n", 14);
 
 
 #ifdef __P4080   
@@ -230,12 +219,14 @@ int main(int argc, char** argv)
             printf("Sanity check Failed!%d/%d != %d\n", (int)(*buf),(int) buf[msg_size -1], i);
             break;
         }
-#endif        
+
         if (trace_fd >= 0) 
         {
 		    write(trace_fd, "0", 1);
 		    printf("trace finish\n");
         }
+#endif        
+        
     }
     
         

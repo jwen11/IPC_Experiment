@@ -8,7 +8,7 @@ touch ./log/producer_$data.log
 # sudo bash -c 'echo "producer_$data" > ./log/producer_$data.log'
 echo "" > ./log/producer_$data.log
 
-for i in `seq 1 3`;
+for i in `seq 1 5`;
 do
 	echo function_graph > $DEBUGFS/tracing/current_tracer
 	sudo ./producer $data &
@@ -16,6 +16,7 @@ do
 	sudo ./consumer $data 
 	sleep 1
 	cp $DEBUGFS/tracing/trace trace$i
+	echo nop > $DEBUGFS/tracing/current_tracer
 done
 
 # for i in `seq 1 2`;
