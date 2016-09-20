@@ -4,6 +4,7 @@
 # 2016.9.14
 
 import sys
+import os
 
 if len(sys.argv) > 2:
 	print "argument too many"
@@ -19,6 +20,8 @@ i = 0
 count = 1
 stack = []
 stack_print = []
+directory = "pro_result"
+
 # need more initilization here
 
 for i in range(len(data)):
@@ -64,7 +67,10 @@ for line in data:
 				[i, count] = stack.pop()	# finished one frame
 stack_print.reverse()
 
-sys.stdout = open('100.txt', 'w')
+if not os.path.exists(directory):
+    os.makedirs(directory)
+
+sys.stdout = open(directory + '/' + sys.argv[1] + '.txt', 'w')
 sys.stdout.write("Trace result for " + sys.argv[1] + "\n\n")
 for i in stack_print:
 	sys.stdout.write(data[i])				# print the stack

@@ -20,3 +20,10 @@ cd SCE/IPC_Experiment/run_testset.sh
 4.Use ./log/util/collect.sh to collect data from the log
   a. cd ./log/util
   b. ./collect.sh
+
+5. Use for.sh for trace
+    ITER has been changed to 1, data size and iteration are all specified in for.sh
+
+6. Use read_trace.py to process trace result
+    useage: python read_trace.py filename
+    
