@@ -1,4 +1,6 @@
 #! /bin/bash
+sudo rm -rf /tmp/myFIFO
+
 sudo ./producer 1 &
 sleep 1
 sudo ./consumer 1 

@@ -4,6 +4,8 @@
 #define MEASURE_PRODUCER 1
 #define ITER	(1)
 #define PERIOD 40000
+#define BLOCKING 1
+
 
 #define MYPATH	"/tmp/myFIFO"
 #define PRIO 1
