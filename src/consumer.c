@@ -12,6 +12,7 @@
 #include <pthread.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <sys/mman.h>
 #include "../include/define.h"
 #include "../include/util.h"
 
@@ -109,6 +110,8 @@ int main(int argc, char** argv)
 // initilization phase    
 //--------------------------
         printf("argc = %d\n", argc);
+//lock all pages
+    mlockall(MCL_CURRENT | MCL_FUTURE);        
 //set priority
 #if PRIO
     param.sched_priority = 99; /* 1(low) - 99(high) for SCHED_FIFO or SCHED_RR
