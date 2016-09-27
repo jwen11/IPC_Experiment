@@ -271,11 +271,6 @@ int main(int argc, char** argv)
 	    	printf("trace start\n");
 		    write(trace_fd, "1", 1);
 	    }
-#ifdef __P4080   
-		start = photonStartTiming();
-#else
-        gettimeofday (&tstart, NULL);
-#endif        
         
         printf("marker_fd:%i\n", marker_fd);
 	    if (marker_fd >= 0)
@@ -283,11 +278,14 @@ int main(int argc, char** argv)
 	    	// printf("trace_marker works\n");
 	    	write(marker_fd, "about to read\n", 14);
 	    }
+#ifdef __P4080   
+		start = photonStartTiming();
+#else
+        gettimeofday (&tstart, NULL);
+#endif        
+        
         
         read(pfd, buf, msg_size);
-
-        if (marker_fd >= 0)
-        	write(marker_fd, "finished read\n", 14);
 
 
 #ifdef __P4080   
@@ -299,16 +297,20 @@ int main(int argc, char** argv)
         time_elapsed = (tend.tv_sec - tstart.tv_sec) * 1000000 +(tend.tv_usec - tstart.tv_usec) ; 
         fprintf(fp,"%lu\n", time_elapsed );
 #endif        
-        if ((*buf) != (char)i || buf[msg_size -1] != (char)i) {
-            printf("Sanity check Failed!%d/%d != %d\n", (int)(*buf),(int) buf[msg_size -1], i);
-            break;
-        }
-
+        if (marker_fd >= 0)
+        	write(marker_fd, "finished read\n", 14);
+        
         if (trace_fd >= 0) 
         {
 		    write(trace_fd, "0", 1);
 		    printf("trace finish\n");
         }
+
+        if ((*buf) != (char)i || buf[msg_size -1] != (char)i) {
+            printf("Sanity check Failed!%d/%d != %d\n", (int)(*buf),(int) buf[msg_size -1], i);
+            break;
+        }
+
 #endif       
         intProducer();// Send an interrupt to the producer
         fflush(stdout); 

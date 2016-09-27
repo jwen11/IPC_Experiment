@@ -258,6 +258,11 @@ int main(int argc, char** argv)
             write(trace_fd, "1", 1);
         }
 
+        if (marker_fd >= 0)
+        {
+            // printf("trace_marker works\n");
+            write(marker_fd, "about to write\n", 15);
+        }
 #ifdef __P4080   
 		start = photonStartTiming();
 #else
@@ -265,16 +270,9 @@ int main(int argc, char** argv)
 
 #endif
 #endif        
-        if (marker_fd >= 0)
-        {
-            // printf("trace_marker works\n");
-            write(marker_fd, "about to write\n", 15);
-        }
 
         write(pfd, buf, msg_size);
 
-        if (marker_fd >= 0)
-            write(marker_fd, "finished write\n", 15);
  
 #if MEASURE_PRODUCER
 #ifdef __P4080   
@@ -289,6 +287,8 @@ int main(int argc, char** argv)
         
         fprintf(fp,"%lu\n", time_elapsed );
 #endif
+        if (marker_fd >= 0)
+            write(marker_fd, "finished write\n", 15);
         if (trace_fd >= 0) 
         {
             write(trace_fd, "0", 1);
