@@ -110,8 +110,6 @@ int main(int argc, char** argv)
 // initilization phase    
 //--------------------------
         printf("argc = %d\n", argc);
-//lock all pages
-    mlockall(MCL_CURRENT | MCL_FUTURE);        
 //set priority
 #if PRIO
     param.sched_priority = 99; /* 1(low) - 99(high) for SCHED_FIFO or SCHED_RR
@@ -184,6 +182,12 @@ int main(int argc, char** argv)
     fprintf(fp,"#EPU\n");
 #endif
     fprintf(fp,"%d\n",ITER);
+//lock all pages
+   if ( mlockall(MCL_CURRENT | MCL_FUTURE))
+   {
+        printf("mlockall failed");
+        return 1;
+   }
 #endif    
     initSync();
     intProducer();
@@ -263,6 +267,12 @@ int main(int argc, char** argv)
 
 #if MEASURE_PRODUCER    
 #else
+//unlock all pages
+   if ( munlockall())
+   {
+        printf("munlockall failed");
+        return 1;
+   }
     fclose (fp);
     printf("Successfully sampled %d read operations\n",ITER);
     free (g_mem_ptr);

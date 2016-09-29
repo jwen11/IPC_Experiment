@@ -110,8 +110,6 @@ int main(int argc, char** argv)
 //--------------------------
         printf("argc = %d\n", argc);
 
-//lock all pages
-    mlockall(MCL_CURRENT | MCL_FUTURE);        
 //set priority
 #if PRIO
     param.sched_priority = 99; /* 1(low) - 99(high) for SCHED_FIFO or SCHED_RR
@@ -178,11 +176,16 @@ int main(int argc, char** argv)
         return 1;
     }
     fprintf(fp,"#%s\n",logname);
+//lock all pages
+   if ( mlockall(MCL_CURRENT | MCL_FUTURE))
+   {
+        printf("mlockall failed");
+        return 1;
+   }
 #ifdef __P4080   
     fprintf(fp,"#EPU\n");
 #endif
     fprintf(fp,"%d\n",ITER);
-#else
 #endif
 
     initSync(); 
@@ -262,6 +265,12 @@ int main(int argc, char** argv)
     
         
 #if MEASURE_PRODUCER
+//unlock all pages
+   if ( munlockall())
+   {
+        printf("munlockall failed");
+        return 1;
+   }
     fclose (fp);
     printf("Successfully sampled %d write operations\n",ITER);
     free (g_mem_ptr);

@@ -2,7 +2,7 @@
 #define _DEFINE_H_
 
 #define MEASURE_PRODUCER 0
-#define ITER	(10)
+#define ITER	(100)
 #define PERIOD 40000
 #define BLOCKING 1
 
